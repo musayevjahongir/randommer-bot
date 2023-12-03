@@ -5,3 +5,4 @@ class Randommer:
     def get_url(self) -> str:
         '''get url'''
         return self.base_url
+    
