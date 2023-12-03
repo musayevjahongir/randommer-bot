@@ -102,6 +102,9 @@ def main(url: str):
                 text_ = text1.Text()
                 text_1 = text_.generate_LoremIpsum(API_KEY, "normal", "words", 20)
                 send_message(url, user["id"], text_1)
+            
+            else:
+                send_message(url, user["id"], "Error massage")
 
         last_update_id = current_update['update_id']
 
