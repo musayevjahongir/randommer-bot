@@ -1,8 +1,9 @@
-from settings import URL, API_KEY
+from settings import URL, API_KEY, cart_msg
+from datetime import datetime
 import requests
 from time import sleep
 from random import choice
-from randomer import card, finance, misc, name, phone, social_number, randommer, text1
+from randomer import card, finance, misc, name, phone, social_number,  text1
 
 
 welcome_msg =""""Hello and welcome to Randommer Bot!
@@ -40,7 +41,7 @@ def get_last_update(url: str) -> dict:
 
     return response.status_code
 
-def send_message(url: str, chat_id: str, text: str):
+def send_message(url: str, chat_id: str, text: str, mode=False):
     endpoint = '/sendMessage'
     url += endpoint
 
@@ -48,6 +49,8 @@ def send_message(url: str, chat_id: str, text: str):
         "chat_id": chat_id,
         "text": text
     }
+    if mode:
+        payload["parse_mode"] = "HTML"
 
     requests.get(url, params=payload)
 
@@ -67,10 +70,18 @@ def main(url: str):
                 send_message(url, user['id'], welcome_msg)
 
             elif text == '/card':
-                card_= card.Card()
-                card1 = card_.get_card(API_KEY)
-                send_message(url, user['id'], card1)
-
+                c=card.Card()
+                cart_data = c.get_card(api_key=API_KEY)
+                date_object = datetime.fromisoformat(cart_data['date'])
+                msg = cart_msg.format(
+                    bank=cart_data['type'],
+                    fullname=cart_data['fullName'],
+                    number=cart_data['cardNumber'],
+                    pin=cart_data['pin'],
+                    cvv=cart_data['cvv'],
+                    date=date_object.strftime('%Y-%m-%d')
+                    )
+                send_message(url, user['id'], msg, mode=True)
             elif text == '/finance':
                 finance_=finance.Finance()
                 finance1 = finance_.get_crypto_address_types(API_KEY)

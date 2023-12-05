@@ -30,7 +30,7 @@ class Card(Randommer):
             response = requests.get(url, headers=headers)
 
         if response.status_code == 200:
-            return dumps(response.json(), indent=4)
+            return response.json()
         
         return response.status_code
 
